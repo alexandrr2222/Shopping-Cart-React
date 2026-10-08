@@ -1,7 +1,6 @@
 import { useId, useState } from "react";
-import type { Product } from "../fetchProducts";
 import { useOutletContext } from "react-router";
-import type { CartContextType } from "../App";
+import type { CartContextType, Product } from "../types";
 
 export function ProductCard({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);

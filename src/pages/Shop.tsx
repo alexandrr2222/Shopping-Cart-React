@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
-import { fetchProducts, fetchingReducer } from "../../fetchProducts";
-import { ProductCard } from "../../productCard/ProductCard";
+import { fetchProducts, fetchingReducer } from "../fetchProducts";
+import { ProductCard } from "../components/ProductCard";
 
 export function Shop() {
   const [fetching, dispatch] = useReducer(fetchingReducer, {

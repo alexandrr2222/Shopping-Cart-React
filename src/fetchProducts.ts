@@ -1,3 +1,5 @@
+import type { Product } from "./types";
+
 export async function fetchProducts(
   dispatch: React.ActionDispatch<[action: ActionType]>,
 ) {
@@ -26,15 +28,6 @@ export async function fetchProducts(
   }
 }
 
-export type Product = {
-  id: number;
-  category: string;
-  title: string;
-  image: string;
-  description: string;
-  price: number;
-  quantity?: number;
-};
 type StateType =
   | { status: "loading" }
   | { status: "success"; products: Array<Product> }

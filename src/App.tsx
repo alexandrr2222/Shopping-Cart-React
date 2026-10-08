@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import type { Product } from "./fetchProducts";
+import type { CartContextType, CartType, Product } from "./types";
 
-export type CartContextType = {
-  cart: CartType;
-  addToCart: (arg0: Product) => void;
-};
-export type CartType = Array<Product>;
 function App() {
   const [cart, setCart] = useState<CartType>([]);
   function addToCart(product: Product) {
