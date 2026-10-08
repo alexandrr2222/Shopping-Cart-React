@@ -1,8 +1,11 @@
 import { useOutletContext } from "react-router";
 import type { CartContextType } from "../types";
+import { useId } from "react";
 
 export function Cart() {
-  const { cart } = useOutletContext<CartContextType>();
+  const { cart, changeProductQuantity, deleteProduct } =
+    useOutletContext<CartContextType>();
+  const inputId = useId();
   return (
     <div>
       <h2>Cart</h2>
@@ -14,7 +17,21 @@ export function Cart() {
             return (
               <li key={product.id} className="outline-2 outline-black">
                 <div>{product.title}</div>
-                <div>Amount: {product.quantity}</div>
+                <label htmlFor={inputId}>Amount</label>
+                <input
+                  id={inputId}
+                  type="number"
+                  defaultValue={product.quantity}
+                  onChange={(e) => {
+                    const typedInput = Number(e.target.value);
+                    if (typeof typedInput !== "number" || typedInput < 1)
+                      return 1;
+                    else changeProductQuantity(product, typedInput);
+                  }}
+                />
+                <button onClick={() => deleteProduct(product)}>
+                  Remove Item
+                </button>
                 <div>Price per item: {product.price}</div>
               </li>
             );
@@ -34,4 +51,3 @@ export function Cart() {
     </div>
   );
 }
-// refactor cart adding to usereducer, so it add 1, remove 1, addNew

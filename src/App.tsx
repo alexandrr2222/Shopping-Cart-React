@@ -4,6 +4,26 @@ import type { CartContextType, Product } from "./types";
 
 function App() {
   const [cart, dispatchCart] = useReducer(cartReducer, []);
+  function changeProductQuantity(product: Product, amount: number) {
+    const filteredPrev = cart.filter((p) => p.id !== product.id);
+    const duplicate = cart.filter((p) => p.id === product.id);
+    dispatchCart({
+      type: "changeQuantity",
+      filteredArray: filteredPrev,
+      modfiedProduct: {
+        ...duplicate[0],
+        quantity: amount,
+      },
+    });
+  }
+  function deleteProduct(product: Product) {
+    const filteredPrev = cart.filter((p) => p.id !== product.id);
+    dispatchCart({
+      type: "deleteProduct",
+      newCart: filteredPrev,
+    });
+  }
+
   function addToCart(product: Product) {
     const filteredPrev = cart.filter((p) => p.id !== product.id);
     const duplicate = cart.filter((p) => p.id === product.id);
@@ -54,7 +74,16 @@ function App() {
           )
         </NavLink>
       </nav>
-      <Outlet context={{ cart, addToCart } satisfies CartContextType} />
+      <Outlet
+        context={
+          {
+            cart,
+            addToCart,
+            changeProductQuantity,
+            deleteProduct,
+          } satisfies CartContextType
+        }
+      />
     </div>
   );
 }
@@ -69,6 +98,10 @@ type ActionType =
       type: "changeQuantity";
       filteredArray: Array<Product>;
       modfiedProduct: Product;
+    }
+  | {
+      type: "deleteProduct";
+      newCart: Array<Product>;
     };
 
 function cartReducer(state: StateType, action: ActionType): StateType {
@@ -78,6 +111,9 @@ function cartReducer(state: StateType, action: ActionType): StateType {
     }
     case "changeQuantity": {
       return [...action.filteredArray, action.modfiedProduct];
+    }
+    case "deleteProduct": {
+      return [...action.newCart];
     }
     default:
       throw new Error("cart reducer failed");

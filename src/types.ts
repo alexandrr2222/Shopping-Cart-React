@@ -11,5 +11,7 @@ export type Product = {
 export type CartContextType = {
   cart: CartType;
   addToCart: (arg0: Product) => void;
+  changeProductQuantity: (arg0: Product, arg1: number) => void;
+  deleteProduct: (arg0: Product) => void;
 };
 export type CartType = Array<Product>;
