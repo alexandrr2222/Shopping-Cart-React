@@ -1,27 +1,30 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { NavLink, Outlet } from "react-router";
-import type { CartContextType, CartType, Product } from "./types";
+import type { CartContextType, Product } from "./types";
 
 function App() {
-  const [cart, setCart] = useState<CartType>([]);
+  const [cart, dispatchCart] = useReducer(cartReducer, []);
   function addToCart(product: Product) {
-    setCart((prev) => {
-      const filteredPrev = prev.filter((p) => p.id !== product.id);
-      const duplicate = prev.filter((p) => p.id === product.id);
-      if (
-        duplicate.length > 0 &&
-        duplicate[0].quantity !== undefined &&
-        product.quantity !== undefined
-      ) {
-        return [
-          ...filteredPrev,
-          {
-            ...duplicate[0],
-            quantity: duplicate[0].quantity + product.quantity,
-          },
-        ];
-      } else return [...prev, product];
-    });
+    const filteredPrev = cart.filter((p) => p.id !== product.id);
+    const duplicate = cart.filter((p) => p.id === product.id);
+    if (
+      duplicate.length > 0 &&
+      duplicate[0].quantity !== undefined &&
+      product.quantity !== undefined
+    ) {
+      dispatchCart({
+        type: "changeQuantity",
+        filteredArray: filteredPrev,
+        modfiedProduct: {
+          ...duplicate[0],
+          quantity: duplicate[0].quantity + product.quantity,
+        },
+      });
+    } else
+      dispatchCart({
+        type: "addNewProduct",
+        product: product,
+      });
   }
 
   return (
@@ -57,3 +60,26 @@ function App() {
 }
 
 export default App;
+
+type StateType = Array<Product>;
+
+type ActionType =
+  | { type: "addNewProduct"; product: Product }
+  | {
+      type: "changeQuantity";
+      filteredArray: Array<Product>;
+      modfiedProduct: Product;
+    };
+
+function cartReducer(state: StateType, action: ActionType): StateType {
+  switch (action.type) {
+    case "addNewProduct": {
+      return [...state, action.product];
+    }
+    case "changeQuantity": {
+      return [...action.filteredArray, action.modfiedProduct];
+    }
+    default:
+      throw new Error("cart reducer failed");
+  }
+}
