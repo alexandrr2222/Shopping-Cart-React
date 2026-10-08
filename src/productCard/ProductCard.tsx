@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { Product } from "../fetchProducts";
 
 export function ProductCard({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
+  const inputId = useId();
   return (
     <li className="border-2 border-black">
       <h2>{product.title}</h2>
-      <div>product</div>
+      <img src={product.image} alt={product.title} />
+      <div>{product.description}</div>
       <div>
         <button
           type="button"
@@ -18,8 +20,18 @@ export function ProductCard({ product }: { product: Product }) {
         >
           +
         </button>
-        <label htmlFor="input">Quantity</label>
-        <input id="input" type="number" value={quantity} />
+        <label htmlFor={inputId}>Quantity</label>
+        <input
+          id={inputId}
+          aria-label={"quantity for " + product.title}
+          type="number"
+          value={quantity}
+          onChange={(e) => {
+            const typedInput = Number(e.target.value);
+            if (typeof typedInput !== "number" || typedInput < 1) return 1;
+            else setQuantity(typedInput);
+          }}
+        />
         <button
           type="button"
           onClick={() => {
