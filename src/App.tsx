@@ -5,7 +5,23 @@ import type { CartContextType, CartType, Product } from "./types";
 function App() {
   const [cart, setCart] = useState<CartType>([]);
   function addToCart(product: Product) {
-    setCart((prev) => [...prev, product]);
+    setCart((prev) => {
+      const filteredPrev = prev.filter((p) => p.id !== product.id);
+      const duplicate = prev.filter((p) => p.id === product.id);
+      if (
+        duplicate.length > 0 &&
+        duplicate[0].quantity !== undefined &&
+        product.quantity !== undefined
+      ) {
+        return [
+          ...filteredPrev,
+          {
+            ...duplicate[0],
+            quantity: duplicate[0].quantity + product.quantity,
+          },
+        ];
+      } else return [...prev, product];
+    });
   }
 
   return (

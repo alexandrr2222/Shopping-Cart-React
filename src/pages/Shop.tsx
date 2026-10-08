@@ -11,7 +11,7 @@ export function Shop() {
   }, []);
   return (
     <>
-      <h1>Shop</h1>
+      <h2>Shop</h2>
       {fetching.status === "loading" ? <p>Loading...</p> : null}
       {fetching.status === "error" ? (
         <p>Fetching data failed: {fetching.error}</p>
