@@ -1,9 +1,12 @@
 import { useId, useState } from "react";
 import type { Product } from "../fetchProducts";
+import { useOutletContext } from "react-router";
+import type { CartContextType } from "../App";
 
 export function ProductCard({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const inputId = useId();
+  const { addToCart } = useOutletContext<CartContextType>();
   return (
     <li className="border-2 border-black">
       <h2>{product.title}</h2>
@@ -45,7 +48,12 @@ export function ProductCard({ product }: { product: Product }) {
           -
         </button>
       </div>
-      <button type="button">Add to cart</button>
+      <button
+        type="button"
+        onClick={() => addToCart({ ...product, quantity: quantity })}
+      >
+        Add to cart
+      </button>
     </li>
   );
 }
