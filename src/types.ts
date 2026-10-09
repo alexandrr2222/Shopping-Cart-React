@@ -13,5 +13,11 @@ export type CartContextType = {
   addToCart: (arg0: Product) => void;
   changeProductQuantity: (arg0: Product, arg1: number) => void;
   deleteProduct: (arg0: Product) => void;
+  fetching: StateType;
 };
 export type CartType = Array<Product>;
+
+type StateType =
+  | { status: "loading" }
+  | { status: "success"; products: Array<Product> }
+  | { status: "error"; error: string };

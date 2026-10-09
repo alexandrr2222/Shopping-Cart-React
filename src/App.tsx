@@ -1,8 +1,16 @@
-import { useReducer } from "react";
 import { NavLink, Outlet } from "react-router";
 import type { CartContextType, Product } from "./types";
+import { useEffect, useReducer } from "react";
+import { fetchProducts, fetchingReducer } from "./fetchProducts";
 
 function App() {
+  const [fetching, dispatch] = useReducer(fetchingReducer, {
+    status: "loading",
+  });
+  useEffect(() => {
+    fetchProducts(dispatch);
+  }, []);
+
   const [cart, dispatchCart] = useReducer(cartReducer, []);
   function changeProductQuantity(product: Product, amount: number) {
     const filteredPrev = cart.filter((p) => p.id !== product.id);
@@ -81,6 +89,7 @@ function App() {
             addToCart,
             changeProductQuantity,
             deleteProduct,
+            fetching,
           } satisfies CartContextType
         }
       />

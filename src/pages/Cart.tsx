@@ -21,12 +21,12 @@ export function Cart() {
                 <input
                   id={inputId}
                   type="number"
-                  defaultValue={product.quantity}
+                  value={product.quantity}
                   onChange={(e) => {
                     const typedInput = Number(e.target.value);
-                    if (typeof typedInput !== "number" || typedInput < 1)
-                      return 1;
-                    else changeProductQuantity(product, typedInput);
+                    if (typeof typedInput !== "number" || typedInput < 1) {
+                      return changeProductQuantity(product, 1);
+                    } else changeProductQuantity(product, typedInput);
                   }}
                 />
                 <button onClick={() => deleteProduct(product)}>

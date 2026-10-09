@@ -1,14 +1,9 @@
-import { useEffect, useReducer } from "react";
-import { fetchProducts, fetchingReducer } from "../fetchProducts";
+import { useOutletContext } from "react-router";
 import { ProductCard } from "../components/ProductCard";
+import type { CartContextType } from "../types";
 
 export function Shop() {
-  const [fetching, dispatch] = useReducer(fetchingReducer, {
-    status: "loading",
-  });
-  useEffect(() => {
-    fetchProducts(dispatch);
-  }, []);
+  const { fetching } = useOutletContext<CartContextType>();
   return (
     <>
       <h2>Shop</h2>
