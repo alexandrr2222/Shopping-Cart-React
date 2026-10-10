@@ -3,6 +3,13 @@ import type { CartContextType, Product } from "./types";
 import { useEffect, useReducer } from "react";
 import { fetchProducts, fetchingReducer } from "./fetchProducts";
 
+const navClass = ({ isActive }: { isActive: boolean }) =>
+  `inline-flex items-center rounded-md px-3 py-1.5 text-lg tracking-wide transition-colors ${
+    isActive
+      ? "bg-surface-hover text-burgundy-light"
+      : "text-muted hover:bg-surface-hover hover:text-text"
+  }`;
+
 function App() {
   const [fetching, dispatch] = useReducer(fetchingReducer, {
     status: "loading",
@@ -13,15 +20,13 @@ function App() {
 
   const [cart, dispatchCart] = useReducer(cartReducer, []);
   function changeProductQuantity(product: Product, amount: number) {
-    const filteredPrev = cart.filter((p) => p.id !== product.id);
-    const duplicate = cart.filter((p) => p.id === product.id);
+    const newArray = cart.map((p) => {
+      if (p.id === product.id) return { ...p, quantity: amount };
+      else return p;
+    });
     dispatchCart({
       type: "changeQuantity",
-      filteredArray: filteredPrev,
-      modfiedProduct: {
-        ...duplicate[0],
-        quantity: amount,
-      },
+      newArray: newArray,
     });
   }
   function deleteProduct(product: Product) {
@@ -33,8 +38,12 @@ function App() {
   }
 
   function addToCart(product: Product) {
-    const filteredPrev = cart.filter((p) => p.id !== product.id);
     const duplicate = cart.filter((p) => p.id === product.id);
+    const newArray = cart.map((p) => {
+      if (p.id === product.id && p.quantity && product.quantity)
+        return { ...p, quantity: p.quantity + product.quantity };
+      else return p;
+    });
     if (
       duplicate.length > 0 &&
       duplicate[0].quantity !== undefined &&
@@ -42,11 +51,7 @@ function App() {
     ) {
       dispatchCart({
         type: "changeQuantity",
-        filteredArray: filteredPrev,
-        modfiedProduct: {
-          ...duplicate[0],
-          quantity: duplicate[0].quantity + product.quantity,
-        },
+        newArray: newArray,
       });
     } else
       dispatchCart({
@@ -55,44 +60,47 @@ function App() {
       });
   }
 
+  const cartCount = cart.reduce(
+    (sum, product) => sum + (product.quantity ? product.quantity : 0),
+    0,
+  );
+
   return (
-    <div>
-      <nav className="flex gap-3">
-        <NavLink
-          className={({ isActive }) => (isActive ? "activePage" : "")}
-          to="/"
-        >
-          Home
-        </NavLink>
-        <NavLink
-          className={({ isActive }) => (isActive ? "activePage" : "")}
-          to="/shop"
-        >
-          Shop
-        </NavLink>
-        <NavLink
-          className={({ isActive }) => (isActive ? "activePage" : "")}
-          to="/cart"
-        >
-          Cart (
-          {cart.reduce(
-            (sum, product) => sum + (product.quantity ? product.quantity : 0),
-            0,
-          )}
-          )
-        </NavLink>
-      </nav>
-      <Outlet
-        context={
-          {
-            cart,
-            addToCart,
-            changeProductQuantity,
-            deleteProduct,
-            fetching,
-          } satisfies CartContextType
-        }
-      />
+    <div className="flex h-dvh flex-col bg-bg font-serif text-text">
+      <header className="z-10 shrink-0 border-b-2 border-burgundy/70 bg-surface shadow-lg shadow-black/40">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <h1 className="text-4xl tracking-[0.12em] text-text">The Store</h1>
+          <nav className="flex items-center gap-2">
+            <NavLink className={navClass} to="/">
+              Home
+            </NavLink>
+            <NavLink className={navClass} to="/shop">
+              Store
+            </NavLink>
+            <NavLink className={navClass} to="/cart">
+              Cart
+              <span className="ml-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-burgundy px-1.5 font-sans text-xs font-bold text-text">
+                {cartCount}
+              </span>
+            </NavLink>
+          </nav>
+        </div>
+      </header>
+      <main className="flex-1 overflow-y-auto scrollbar-gutter-stable">
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          <Outlet
+            context={
+              {
+                cart,
+                addToCart,
+                changeProductQuantity,
+                deleteProduct,
+                fetching,
+              } satisfies CartContextType
+            }
+          />
+        </div>
+      </main>
     </div>
   );
 }
@@ -105,8 +113,7 @@ type ActionType =
   | { type: "addNewProduct"; product: Product }
   | {
       type: "changeQuantity";
-      filteredArray: Array<Product>;
-      modfiedProduct: Product;
+      newArray: Array<Product>;
     }
   | {
       type: "deleteProduct";
@@ -119,7 +126,7 @@ function cartReducer(state: StateType, action: ActionType): StateType {
       return [...state, action.product];
     }
     case "changeQuantity": {
-      return [...action.filteredArray, action.modfiedProduct];
+      return [...action.newArray];
     }
     case "deleteProduct": {
       return [...action.newCart];

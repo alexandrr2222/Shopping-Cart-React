@@ -17,7 +17,11 @@ export type CartContextType = {
 };
 export type CartType = Array<Product>;
 
-type StateType =
+export type StateType =
   | { status: "loading" }
   | { status: "success"; products: Array<Product> }
   | { status: "error"; error: string };
+
+export type ActionType =
+  | { type: "success"; data: Array<Product> }
+  | { type: "error"; error: string };

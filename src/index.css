@@ -1,8 +1,24 @@
 @import "tailwindcss";
 
-:root {
-  background-color: antiquewhite;
+html {
+  background-color: var(--color-bg);
+  color-scheme: dark;
 }
-.activePage {
-  background-color: goldenrod;
+body {
+  height: 100%;
+  overflow: hidden;
+}
+@theme {
+  --color-bg: #1e1c1c;
+  --color-surface: #2a2727;
+  --color-surface-hover: #353131;
+  --color-border: #3a3535;
+  --color-burgundy: #9e3b3b;
+  --color-burgundy-light: #c25454;
+  --color-text: #ece3d6;
+  --color-muted: #9a918a;
+  --color-parchment: #e6dccd;
+  --color-parchment-dark: #cfc2ae;
+
+  --font-serif: "Alegreya", Georgia, serif;
 }
