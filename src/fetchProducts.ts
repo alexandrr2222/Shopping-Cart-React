@@ -29,7 +29,7 @@ export async function fetchProducts(
 }
 
 export function fetchingReducer(
-  state: StateType,
+  _state: StateType,
   action: ActionType,
 ): StateType {
   switch (action.type) {
